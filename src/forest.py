@@ -10,7 +10,7 @@ from src.tree import DecisionTreeClassification, DecisionTreeRegression
 class RandomForest:
     def __init__(
         self,
-        data_type: DataType,
+        data_type: DataType = DataType.REGRESSION,
         max_depth: int = 2,
         min_samples_leaf: int = 5,
         max_leaf_nodes: int = -1,
