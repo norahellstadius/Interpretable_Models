@@ -5,6 +5,7 @@ sys.path.append("..")
 from src.tree import DecisionTreeRegression, DecisionTreeClassification
 
 def valid_split_point_with_quantile(tree: Union[DecisionTreeRegression, DecisionTreeClassification], splits: list) -> bool:
+    '''Return true if split_value exists in quantiles'''
     stack = [tree.root_node]
 
     while stack: 
