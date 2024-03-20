@@ -14,7 +14,7 @@ from src.linear import fit_L0
 class L0_Rulefit:
     def __init__(
         self,
-        data_type: DataType,
+        data_type: DataType = DataType(1),
         max_depth: int = 2,
         partial_sampling: int = 0.70,
         min_samples_leaf: int = 5,
