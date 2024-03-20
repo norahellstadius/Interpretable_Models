@@ -59,6 +59,7 @@ class Sirus:
         self.y_train = None
         self.X_train = None
         self.scalar = None  # scale instance for feature matrix
+        self.estimators_ = None #same as rules 
 
     def set_attributes(self, **kwargs):
         """
@@ -98,6 +99,7 @@ class Sirus:
         # remove linearly dependent rules
         if self.remove_ld:
             self.rules = filter_linearly_dependent(self.rules)
+            self.estimators_ = self.rules #this is double but its for multistudy to get uniform naming
 
         if len(self.rules) > 0:
             X_feature_matrix = self.get_feature_matrix(self.rules, self.X_train)
