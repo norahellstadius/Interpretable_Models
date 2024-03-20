@@ -344,18 +344,4 @@ class TestL0Rulefit(unittest.TestCase):
         self.assertEqual(num_active_rules, num_positive_coeffs, "num active rules should be equal to num coeffs > 0")
 
 if __name__ == "__main__":
-    loader = unittest.TestLoader()
-    suite = unittest.TestSuite()
-
-    # Add test cases from each test class
-    suite.addTests(loader.loadTestsFromTestCase(TestLinearModels))
-    suite.addTests(loader.loadTestsFromTestCase(TestRuleEsemble))
-    suite.addTests(loader.loadTestsFromTestCase(TestDecisionTree))
-    suite.addTest(loader.loadTestsFromTestCase(TestDependent))
-    suite.addTests(loader.loadTestsFromTestCase(TestRandomForest))
-    suite.addTests(loader.loadTestsFromTestCase(TestSIRUS))
-    suite.addTests(loader.loadTestsFromTestCase(TestL0Rulefit))
-
-    # Run the test suite
-    runner = unittest.TextTestRunner()
-    result = runner.run(suite)
+    unittest.main()
