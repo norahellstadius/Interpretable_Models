@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Callable
 from collections import defaultdict
 
-sys.path.append("../")
+sys.path.append("../../")
 from src.tree import SplitPoint
 from src.quantiles import get_quantile_index
 
