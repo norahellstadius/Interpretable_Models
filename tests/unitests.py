@@ -17,10 +17,11 @@ from src.tree import DecisionTreeClassification, DecisionTreeRegression
 from src.ruleEsemble import RuleEnsembleRegression, RuleEnsembleClassification
 from src.sirus.dependent import filter_linearly_dependent
 from src.sirus.sirus import SirusRegression, SirusClassification
-from src.L0_rulefit.L0rulefit import L0_Rulefit
+from src.l0_rulefit.l0rulefit import L0_Rulefit
+from src.rule_generator.simply_rules import SimplyRules
 from tests.utils import valid_split_point_with_quantile
 
-class TestLinearModels(unittest.TestCase):
+class Test_LinearModels(unittest.TestCase):
     def setUp(self):
         self.data = zip([get_boston_housing, get_BW_data], [DataType.REGRESSION, DataType.CLASSIFICATION])
         self.max_rules = 10
@@ -43,7 +44,7 @@ class TestLinearModels(unittest.TestCase):
             is_max_rules_satisfied = sum(result_dict["coeffs"] > 0) <= self.max_rules
             self.assertTrue(is_max_rules_satisfied, "More positve coeffs can allowed by max rules")
 
-class TestDependent(unittest.TestCase):
+class Test_Dependent(unittest.TestCase):
     def setUp(self):
         X, y = get_boston_housing()
         self.X = X
@@ -58,7 +59,7 @@ class TestDependent(unittest.TestCase):
         rules_post_filter = filter_linearly_dependent(rules_pre_filter)
         self.assertEqual(len(rules_pre_filter)/ 2, len(rules_post_filter), msg="post filter should return 1 rule when two rules are identical")
 
-class TestRuleEsemble(unittest.TestCase):
+class Test_RuleEsemble(unittest.TestCase):
     def setUp(self):
         X, y = get_boston_housing()
         self.X = X
@@ -110,7 +111,7 @@ class TestRuleEsemble(unittest.TestCase):
         self.assertEqual(num_keys, len(rules)/ 2, "num keys should be half since we have duplicate rules")
         self.assertEqual(count_sum, len(rules), "count should be the number of total rules")
 
-class TestDecisionTree(unittest.TestCase):
+class Test_DecisionTree(unittest.TestCase):
     def setUp(self):
         # Initialize some sample data for testing
         np.random.seed(42)
@@ -183,7 +184,7 @@ class TestDecisionTree(unittest.TestCase):
                 random_state=self.random_state,
             ).fit(self.X, invalid_y)
 
-class TestRandomForest(unittest.TestCase):
+class Test_RandomForest(unittest.TestCase):
     def setUp(self):
         # Initialize some sample data for testing
         X, y = get_BW_data()
@@ -270,7 +271,7 @@ class TestRandomForest(unittest.TestCase):
         self.assertTrue(all(bool_list))
 
 
-class TestSIRUS(unittest.TestCase):
+class Test_SIRUS(unittest.TestCase):
     def setUp(self):
         X, y = get_boston_housing()
         self.X = X
@@ -321,7 +322,7 @@ class TestSIRUS(unittest.TestCase):
         rule_post_filter = self.sirus_filter1.get_high_frequency_rules(rules_pre_filter, self.threshold * self.num_trees, FilterType(2))
         self.assertEqual(len(rule_post_filter), 5, msg = "only 5 rules should pass the threshold of 3 rules. The tree_1 generated 5 rules for each of the 3 instances")
 
-class TestL0Rulefit(unittest.TestCase):
+class Test_L0Rulefit(unittest.TestCase):
     def setUp(self):
         X, y = get_boston_housing()
         self.X = X
@@ -362,10 +363,29 @@ class TestL0Rulefit(unittest.TestCase):
                                   max_split_candidates=self.X.shape[1], 
                                   regularization=RegType.NONE,
                                   random_state=1).fit(self.X, self.y)
-
         self.assertEqual(len(non_reg_model.pre_regularized_rules), len(non_reg_model.estimators_), msg = "No rules should be removed")
         self.assertIsInstance(non_reg_model.linear_model, LinearRegression)
-                                
+
+class Test_SimplyRules(unittest.TestCase):
+    def setUp(self):
+        X, y = get_boston_housing()
+        self.X = X
+        self.y = y
+        self.num_trees = 10
+        self.model_r = SimplyRules(data_type=DataType.REGRESSION,
+                                  max_depth=2,
+                                  partial_sampling=0.5,
+                                  num_trees=self.num_trees, 
+                                  max_split_candidates=self.X.shape[1], 
+                                  random_state=1).fit(self.X, self.y)   
+
+    def test_feature_matrix_dim(self):
+        feature_matrix = self.model_r.get_feature_matrix(self.model_r.estimators_, self.X)
+        self.assertEqual(feature_matrix.shape, (self.X.shape[0], len(self.model_r.estimators_)), msg = "Correct shape: number samples x number rules")
+    
+    def test_num_rules_generated(self):
+        num_rules = len(self.model_r.estimators_)
+        self.assertLessEqual(num_rules, 5 * self.num_trees, "if contains duplicates may be less than 50. With depth 2 you generate 5 rules per tree")
 
 if __name__ == "__main__":
     unittest.main()
