@@ -22,7 +22,7 @@ class L0_Rulefit:
         num_trees: int = 100,
         max_rules: int = 20,
         max_split_candidates: int = None,
-        regularize: RegType = RegType.L0,
+        regularization: RegType = RegType.L0,
         random_state: int = 1,
     ):
         """
@@ -59,13 +59,19 @@ class L0_Rulefit:
         self.max_split_candidates = max_split_candidates
         self.max_rules = max_rules
         self.partial_sampling = partial_sampling
-        self.regularize = regularize
+        self.regularization = regularization
         self.random_state = random_state
 
         if data_type not in [DataType.REGRESSION, DataType.CLASSIFICATION]:
             raise ValueError(
-                "Invalid value for model_type. Expected 'Classification' or 'Regression', but got '{}'.".format(
+                "Invalid value for data_type. Expected 'Classification' or 'Regression', but got '{}'.".format(
                     data_type
+                )
+            )
+        if regularization not in [RegType.NONE, RegType.L0, RegType.RIDGE]:
+            raise ValueError(
+                "Invalid value for regularization. Expected 'NONE', 'L0' or 'RIDGE', but got '{}'.".format(
+                    regularization
                 )
             )
 
@@ -141,9 +147,9 @@ class L0_Rulefit:
         X_rules = self.get_feature_matrix(self.pre_regularized_rules, self.X_train)
         X_rules_scaled = self.scale_data(X_rules)
         #apply L0 regularisation if regularize is True
-        self.fit_linear_model(X_rules_scaled, self.y_train, self.regularize)
+        self.fit_linear_model(X_rules_scaled, self.y_train, self.regularization)
         # if regularize is True: get rules which have non zero coefficents
-        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs) if self.regularize == RegType.L0 else copy.deepcopy(self.pre_regularized_rules)
+        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs) if self.regularization == RegType.L0 else copy.deepcopy(self.pre_regularized_rules)
         return self
     
     def get_feature_matrix(self, rules: list[Rule], X: np.ndarray) -> np.ndarray:

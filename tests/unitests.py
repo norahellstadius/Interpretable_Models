@@ -326,7 +326,7 @@ class TestL0Rulefit(unittest.TestCase):
         X, y = get_boston_housing()
         self.X = X
         self.y = y
-        self.max_rules = 10
+        self.max_rules = 20
         self.model_r = L0_Rulefit(data_type=DataType.REGRESSION,
                                   max_depth=2,
                                   partial_sampling=0.5,
@@ -360,7 +360,7 @@ class TestL0Rulefit(unittest.TestCase):
                                   num_trees=10, 
                                   max_rules=10, 
                                   max_split_candidates=self.X.shape[1], 
-                                  regularize=RegType.NONE,
+                                  regularization=RegType.NONE,
                                   random_state=1).fit(self.X, self.y)
 
         self.assertEqual(len(non_reg_model.pre_regularized_rules), len(non_reg_model.estimators_), msg = "No rules should be removed")
