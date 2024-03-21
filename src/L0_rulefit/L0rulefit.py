@@ -21,6 +21,7 @@ class L0_Rulefit:
         num_trees: int = 100,
         max_rules: int = 20,
         max_split_candidates: int = None,
+        regularize: bool = True,
         random_state: int = 1,
     ):
         self.max_depth = max_depth
@@ -30,6 +31,7 @@ class L0_Rulefit:
         self.max_split_candidates = max_split_candidates
         self.max_rules = max_rules
         self.partial_sampling = partial_sampling
+        self.regularize = regularize
         self.random_state = random_state
 
         if data_type not in [DataType.REGRESSION, DataType.CLASSIFICATION]:
@@ -107,7 +109,7 @@ class L0_Rulefit:
 
         # single rules are turned left and duplicates are removed
         self.pre_regularized_rules = self.rule_ensemble.filter_rules()
-
+        
         X_rules = self.get_feature_matrix(self.pre_regularized_rules, self.X_train)
         X_rules_scaled = self.scale_data(X_rules)
         self.fit_linear_model(X_rules_scaled, self.y_train)

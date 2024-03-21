@@ -604,8 +604,8 @@ class DecisionTreeClassification(DecisionTree):
         if not isinstance(y, np.ndarray):
             return False
 
-        # Check if y contains only integers or strings
-        if not np.issubdtype(y.dtype, np.integer) and not np.issubdtype(y.dtype, np.unicode):
+        # Check if y contains only integers 
+        if not np.issubdtype(y.dtype, np.integer):
             return False
 
         # Check if y contains at least two unique values

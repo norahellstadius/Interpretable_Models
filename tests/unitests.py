@@ -31,7 +31,7 @@ class TestLinearModels(unittest.TestCase):
             are_positive = np.all(model.coef_ >= 0)
             self.assertTrue(are_positive, "Not all coefficients are positive")
             # Add more test cases as needed
-
+    
     def test_max_num_rules_l0(self):
         for data_func, data_type in self.data:
             X, y = data_func()

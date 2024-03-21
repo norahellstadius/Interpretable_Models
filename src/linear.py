@@ -3,10 +3,21 @@ import sys
 from sklearn.linear_model import (
     LogisticRegressionCV,
     RidgeCV,
+    LinearRegression, 
+    LogisticRegression
 )
 import l0learn
 sys.path.append("..")
 from src.data import DataType
+
+
+def fit_lm(X: np.ndarray, y: np.ndarray, data_type: DataType): 
+    if data_type == DataType.REGRESSION:
+        model = LinearRegression(fit_intercept=True)
+    else: 
+        model = LogisticRegression(fit_intercept=True)
+    model.fit(X, y)
+    return model
 
 
 def fit_ridge(X: np.ndarray, y: np.ndarray, data_type: DataType):
@@ -103,11 +114,10 @@ if __name__ == "__main__":
 
     X, y = get_boston_housing()
     data_type = DataType.REGRESSION
-    model = fit_ridge(X, y, data_type)
-    print
+    model = fit_lm(X, y, data_type)
     print(model.coef_)
 
     X, y = get_BW_data()
     data_type = DataType.CLASSIFICATION
-    model = fit_ridge(X, y, data_type)
+    model = fit_lm(X, y, data_type)
     print(model.coef_)
