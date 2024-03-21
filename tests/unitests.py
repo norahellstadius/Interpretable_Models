@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression
 sys.path.append("..")
 from src.quantiles import cutpoints
 from src.forest import RandomForest
-from src.linear import fit_ridge, fit_L0
+from src.linear import fit_ridge, fit_L0, RegType
 from src.rules import get_rules_count, FilterType
 from src.data import get_boston_housing, get_BW_data, DataType
 from src.tree import DecisionTreeClassification, DecisionTreeRegression
@@ -360,7 +360,7 @@ class TestL0Rulefit(unittest.TestCase):
                                   num_trees=10, 
                                   max_rules=10, 
                                   max_split_candidates=self.X.shape[1], 
-                                  regularize=False,
+                                  regularize=RegType.NONE,
                                   random_state=1).fit(self.X, self.y)
 
         self.assertEqual(len(non_reg_model.pre_regularized_rules), len(non_reg_model.estimators_), msg = "No rules should be removed")

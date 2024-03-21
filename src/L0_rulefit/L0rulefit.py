@@ -10,7 +10,7 @@ sys.path.append("../..")
 from src.ruleEsemble import RuleEnsembleClassification, RuleEnsembleRegression
 from src.rules import get_rule_feature_matrix, Rule
 from src.data import DataType
-from src.linear import fit_L0, fit_lm
+from src.linear import fit_L0, fit_lm, RegType
 
 class L0_Rulefit:
     def __init__(
@@ -22,7 +22,7 @@ class L0_Rulefit:
         num_trees: int = 100,
         max_rules: int = 20,
         max_split_candidates: int = None,
-        regularize: bool = True,
+        regularize: RegType = RegType.L0,
         random_state: int = 1,
     ):
         """
@@ -143,7 +143,7 @@ class L0_Rulefit:
         #apply L0 regularisation if regularize is True
         self.fit_linear_model(X_rules_scaled, self.y_train, self.regularize)
         # if regularize is True: get rules which have non zero coefficents
-        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs) if self.regularize else copy.deepcopy(self.pre_regularized_rules)
+        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs) if self.regularize == RegType.L0 else copy.deepcopy(self.pre_regularized_rules)
         return self
     
     def get_feature_matrix(self, rules: list[Rule], X: np.ndarray) -> np.ndarray:
@@ -169,7 +169,7 @@ class L0_Rulefit:
         gamma_max: float = 0.1,
         algorithm: str = "CDPSI",
     ):  
-        if regularize:
+        if regularize == RegType.L0:
             result_dict = fit_L0(
                 X_train = X_train,
                 y_train = y_train,

@@ -1,5 +1,6 @@
-import numpy as np
 import sys
+import numpy as np
+from enum import Enum
 from sklearn.linear_model import (
     LogisticRegressionCV,
     RidgeCV,
@@ -10,6 +11,10 @@ import l0learn
 sys.path.append("..")
 from src.data import DataType
 
+class RegType(Enum):
+    NONE = 1
+    RIDGE = 2
+    L0 = 3
 
 def fit_lm(X: np.ndarray, y: np.ndarray, data_type: DataType): 
     if data_type == DataType.REGRESSION:
