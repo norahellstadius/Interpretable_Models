@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import copy
 
 import l0learn
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
@@ -9,7 +10,7 @@ sys.path.append("../..")
 from src.ruleEsemble import RuleEnsembleClassification, RuleEnsembleRegression
 from src.rules import get_rule_feature_matrix, Rule
 from src.data import DataType
-from src.linear import fit_L0
+from src.linear import fit_L0, fit_lm
 
 class L0_Rulefit:
     def __init__(
@@ -24,6 +25,33 @@ class L0_Rulefit:
         regularize: bool = True,
         random_state: int = 1,
     ):
+        """
+        L0_Rulefit class for trains a random forest to generate rules 
+        and the filters/selects rules by using L0 regularisation
+
+        Parameters:
+        -----------
+        data_type : DataType
+            Type of the data, Regression or Classification.
+        max_depth : int, optional
+            Maximum depth of the trees (default is 2).
+        partial_sampling : float, optional
+            Percentage of samples for bootstrapping (default is 0.70).
+        min_samples_leaf : int, optional
+            Minimum number of samples required to be at a leaf node (default is 5).
+        num_trees : int, optional
+            Number of trees to fit for random forest(default is 100).
+        max_rules : int, optional
+            Maximum number of rules to generate (default is 20). Used as a paramter in L0 regularisation. 
+            This is ignored is regularize is set to False
+        max_split_candidates : int or None, optional
+            Maximum number of feature splits to consider for each node (default is None).
+        regularize : bool, optional
+            Whether to apply L0 regularization (default is True). 
+            If set to False then normal linear regression is applied on all the rules
+        random_state : int, optional
+            Random seed for reproducibility (default is 1).
+        """
         self.max_depth = max_depth
         self.data_type = data_type
         self.min_samples_leaf = min_samples_leaf
@@ -109,11 +137,13 @@ class L0_Rulefit:
 
         # single rules are turned left and duplicates are removed
         self.pre_regularized_rules = self.rule_ensemble.filter_rules()
-        
+
         X_rules = self.get_feature_matrix(self.pre_regularized_rules, self.X_train)
         X_rules_scaled = self.scale_data(X_rules)
-        self.fit_linear_model(X_rules_scaled, self.y_train)
-        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs)  # get rules which have non zero coefficents, stored in self.rules
+        #apply L0 regularisation if regularize is True
+        self.fit_linear_model(X_rules_scaled, self.y_train, self.regularize)
+        # if regularize is True: get rules which have non zero coefficents
+        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs) if self.regularize else copy.deepcopy(self.pre_regularized_rules)
         return self
     
     def get_feature_matrix(self, rules: list[Rule], X: np.ndarray) -> np.ndarray:
@@ -131,6 +161,7 @@ class L0_Rulefit:
         self,
         X_train: np.ndarray,
         y_train: np.ndarray,
+        regularize: bool = True, 
         penalty: str = "L0L2", # check "L0"
         num_folds: int = 5,
         num_gamma: int = 5,
@@ -138,24 +169,27 @@ class L0_Rulefit:
         gamma_max: float = 0.1,
         algorithm: str = "CDPSI",
     ):  
-        result_dict = fit_L0(
-            X_train = X_train,
-            y_train = y_train,
-            data_type = self.data_type,
-            max_rules = self.max_rules,
-            penalty = penalty,
-            num_folds = num_folds,
-            num_gamma = num_gamma,
-            gamma_min = gamma_min,
-            gamma_max = gamma_max,
-            algorithm = algorithm,
-            random_state = self.random_state, 
-            )
+        if regularize:
+            result_dict = fit_L0(
+                X_train = X_train,
+                y_train = y_train,
+                data_type = self.data_type,
+                max_rules = self.max_rules,
+                penalty = penalty,
+                num_folds = num_folds,
+                num_gamma = num_gamma,
+                gamma_min = gamma_min,
+                gamma_max = gamma_max,
+                algorithm = algorithm,
+                random_state = self.random_state, 
+                )
 
-        self.linear_model = result_dict["model"]
-        self.optimal_gamma = result_dict["optimal_gamma"]
-        self.optimal_lambda = result_dict["optimal_lambda"]
-        self.coeffs = result_dict["coeffs"]
+            self.linear_model = result_dict["model"]
+            self.optimal_gamma = result_dict["optimal_gamma"]
+            self.optimal_lambda = result_dict["optimal_lambda"]
+            self.coeffs = result_dict["coeffs"]
+        else: 
+            self.linear_model = fit_lm(X_train, y_train, self.data_type)
 
     def predict(self, X_test: np.ndarray):
         assert (

@@ -68,6 +68,9 @@ class Sirus:
         """
         for attr, value in kwargs.items():
             setattr(self, attr, value)
+    
+    def fit_linear_model(self, X: np.ndarray, y: np.ndarray, data_type: DataType):
+        self.linear_model = fit_ridge(X, y, data_type)
 
     def fit(self, X_train: np.ndarray, y_train: np.ndarray, colnms: list = None):
         assert X_train.shape[0] == len(
@@ -105,7 +108,7 @@ class Sirus:
             X_feature_matrix = self.get_feature_matrix(self.rules, self.X_train)
             X_feature_matrix_scaled = self.scale_data(X_feature_matrix)
             self.fit_linear_model(
-                X_feature_matrix_scaled, self.y_train
+                X_feature_matrix_scaled, self.y_train, self.data_type
             )  # fit ridge and get weights
         else:
             print("0 rules were found")
@@ -234,9 +237,6 @@ class SirusClassification(Sirus):
         stablerules = RuleEnsembleClassification(tree_list, self.X_train, self.y_train)
         return stablerules.rules
 
-    def fit_linear_model(self, X: np.ndarray, y: np.ndarray):
-        self.linear_model = fit_ridge(X, y, self.data_type)
-
 
 class SirusRegression(Sirus):
     def __init__(
@@ -312,10 +312,6 @@ class SirusRegression(Sirus):
     def extract_rules(self, tree_list: list) -> list[Rule]:
         stablerules = RuleEnsembleRegression(tree_list, self.X_train, self.y_train)
         return stablerules.rules
-
-    def fit_linear_model(self, X: np.ndarray, y: np.ndarray):
-        self.linear_model = fit_ridge(X, y, self.data_type)
-
 
 if __name__ == "__main__":
     from sklearn.model_selection import train_test_split

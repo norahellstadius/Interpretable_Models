@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.metrics import explained_variance_score
+from sklearn.linear_model import LinearRegression
 
 sys.path.append("..")
 from src.quantiles import cutpoints
@@ -325,12 +326,13 @@ class TestL0Rulefit(unittest.TestCase):
         X, y = get_boston_housing()
         self.X = X
         self.y = y
+        self.max_rules = 10
         self.model_r = L0_Rulefit(data_type=DataType.REGRESSION,
                                   max_depth=2,
                                   partial_sampling=0.5,
                                   num_trees=10, 
-                                  max_rules=10, 
-                                  max_split_candidates=X.shape[1], 
+                                  max_rules=self.max_rules, 
+                                  max_split_candidates=self.X.shape[1], 
                                   random_state=1).fit(self.X, self.y)
     
     def test_feature_matrix_dim(self):
@@ -342,6 +344,28 @@ class TestL0Rulefit(unittest.TestCase):
         num_active_rules = len(self.model_r.get_active_rules(self.model_r.pre_regularized_rules, self.model_r.coeffs))
         num_positive_coeffs = sum(self.model_r.coeffs > 0)
         self.assertEqual(num_active_rules, num_positive_coeffs, "num active rules should be equal to num coeffs > 0")
+    
+    def test_num_pre_reg_rules(self):
+        num_pre_reg_rules = len(self.model_r.pre_regularized_rules)
+        self.assertLessEqual(num_pre_reg_rules, 50, msg = "Correct answer: >= 50 (since 5 rules per tree is generated). \n Note: some rules may be eliminated due to duplicates")
+
+    def test_num_post_reg_rules(self):
+        num_post_reg_rules = len(self.model_r.estimators_)
+        self.assertLessEqual(num_post_reg_rules, self.max_rules, "number rules should be less than max rules")
+
+    def test_non_regularize(self):
+        non_reg_model = L0_Rulefit(data_type=DataType.REGRESSION,
+                                  max_depth=2,
+                                  partial_sampling=0.5,
+                                  num_trees=10, 
+                                  max_rules=10, 
+                                  max_split_candidates=self.X.shape[1], 
+                                  regularize=False,
+                                  random_state=1).fit(self.X, self.y)
+
+        self.assertEqual(len(non_reg_model.pre_regularized_rules), len(non_reg_model.estimators_), msg = "No rules should be removed")
+        self.assertIsInstance(non_reg_model.linear_model, LinearRegression)
+                                
 
 if __name__ == "__main__":
     unittest.main()
