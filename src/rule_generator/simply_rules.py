@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 
 sys.path.append("../..")
 from src.ruleEsemble import RuleEnsembleClassification, RuleEnsembleRegression
+from src.forest import RandomForest
 from src.rules import get_rule_feature_matrix, Rule
 from src.data import DataType
 from src.linear import fit_L0, fit_lm, RegType
@@ -21,6 +22,7 @@ class SimplyRules:
         min_samples_leaf: int = 5,
         num_trees: int = 100,
         max_split_candidates: int = None,
+        quantiles: list = None, 
         random_state: int = 1,
     ):
         """
@@ -42,6 +44,8 @@ class SimplyRules:
         max_split_candidates : int or None, optional
             Maximum number of feature splits to consider for each node (default is None).
             If set to False then normal linear regression is applied on all the rules
+        quantiles: list (optional)
+            Provide quantiles if splits of the trees should be based on quantiles
         random_state : int, optional
             Random seed for reproducibility (default is 1).
         """
@@ -52,6 +56,7 @@ class SimplyRules:
         self.max_split_candidates = max_split_candidates
         self.partial_sampling = partial_sampling
         self.random_state = random_state
+        self.quantiles = quantiles
 
         if data_type not in [DataType.REGRESSION, DataType.CLASSIFICATION]:
             raise ValueError(
@@ -90,24 +95,36 @@ class SimplyRules:
         if self.max_split_candidates is None:
             self.max_split_candidates = self.get_max_features() 
 
-        if self.data_type == DataType.REGRESSION:
-            self.ml_model = RandomForestRegressor(
-                n_estimators=self.num_trees,
+        if self.quantiles is None: 
+            if self.data_type == DataType.REGRESSION:
+                self.ml_model = RandomForestRegressor(
+                    n_estimators=self.num_trees,
+                    max_depth=self.max_depth,
+                    min_samples_leaf=self.min_samples_leaf,
+                    max_features=self.max_split_candidates,
+                    max_samples=self.partial_sampling,
+                    random_state=self.random_state,
+                )
+            elif self.data_type == DataType.CLASSIFICATION:
+                self.ml_model = RandomForestClassifier(
+                    n_estimators=self.num_trees,
+                    max_depth=self.max_depth,
+                    min_samples_leaf=self.min_samples_leaf,
+                    max_features=self.max_split_candidates,
+                    max_samples=self.partial_sampling,  # TODO: CHECK IF THIS IS CORRECT
+                    random_state=self.random_state,
+                )
+        else:
+            self.ml_model = RandomForest(
+                data_type=self.data_type,
                 max_depth=self.max_depth,
-                min_samples_leaf=self.min_samples_leaf,
-                max_features=self.max_split_candidates,
-                max_samples=self.partial_sampling,
-                random_state=self.random_state,
-            )
-        elif self.data_type == DataType.CLASSIFICATION:
-            self.ml_model = RandomForestClassifier(
-                n_estimators=self.num_trees,
-                max_depth=self.max_depth,
-                min_samples_leaf=self.min_samples_leaf,
-                max_features=self.max_split_candidates,
-                max_samples=self.partial_sampling,  # TODO: CHECK IF THIS IS CORRECT
-                random_state=self.random_state,
-            )
+                min_samples_leaf=self.min_samples_leaf, 
+                num_trees=self.num_trees, 
+                partial_sampling=self.partial_sampling,
+                max_split_candidates=self.max_split_candidates,
+                quantiles=self.quantiles,
+                random_state=self.random_state
+            ) 
 
         # fit the random forest
         self.ml_model.fit(self.X_train, self.y_train)

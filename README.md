@@ -3,6 +3,7 @@
 This respository contains code for numerous interpretable models 
 1. SIRUS
 2. L0_Rulefit 
+2. Simply Rules 
 
 SIRUS: 
 

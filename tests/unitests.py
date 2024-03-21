@@ -19,7 +19,7 @@ from src.sirus.dependent import filter_linearly_dependent
 from src.sirus.sirus import SirusRegression, SirusClassification
 from src.l0_rulefit.l0rulefit import L0_Rulefit
 from src.rule_generator.simply_rules import SimplyRules
-from tests.utils import valid_split_point_with_quantile
+from tests.utils import valid_split_point_with_quantile, valid_split_value_in_rules
 
 class Test_LinearModels(unittest.TestCase):
     def setUp(self):
@@ -386,6 +386,18 @@ class Test_SimplyRules(unittest.TestCase):
     def test_num_rules_generated(self):
         num_rules = len(self.model_r.estimators_)
         self.assertLessEqual(num_rules, 5 * self.num_trees, "if contains duplicates may be less than 50. With depth 2 you generate 5 rules per tree")
+
+    def test_split_in_quantile(self):
+        splits = cutpoints(self.X, 4)
+        model_with_quantile = SimplyRules(data_type=DataType.REGRESSION,
+                                  max_depth=2,
+                                  partial_sampling=0.5,
+                                  num_trees=self.num_trees, 
+                                  max_split_candidates=self.X.shape[1],
+                                  quantiles= splits,
+                                  random_state=1).fit(self.X, self.y)   
+        valid_rules = valid_split_value_in_rules(model_with_quantile.estimators_, splits)
+        self.assertTrue(valid_rules)
 
 if __name__ == "__main__":
     unittest.main()
