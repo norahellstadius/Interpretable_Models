@@ -68,7 +68,7 @@ class L0_Rulefit:
                     data_type
                 )
             )
-        if regularization not in [RegType.NONE, RegType.L0, RegType.RIDGE]:
+        if regularization.name not in [RegType(1).name, RegType(2).name, RegType(3).name]:
             raise ValueError(
                 "Invalid value for regularization. Expected 'RegType.NONE', 'RegType.L0' or 'RegType.RIDGE', but got '{}'.".format(
                     regularization
