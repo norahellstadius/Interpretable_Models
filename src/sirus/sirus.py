@@ -72,9 +72,6 @@ class Sirus:
                 "Quantiles cannot be None when filter_type is INSIDE_SAME_QUANTILE."
             )
 
-        if self.filter_type.name == FilterType(1).name and self.quantiles is None:
-            print(f"Note: fitting sirus with filter type {self.filter_type.name} without quantiles.")
-
         if self.threshold > 1 or self.threshold < 0:
             raise ValueError(f"threshold parameter must be in [0,1], but got {threshold}")
 
@@ -99,6 +96,10 @@ class Sirus:
         self.linear_model = fit_ridge(X, y, data_type)
 
     def fit(self, X_train: np.ndarray, y_train: np.ndarray, colnms: list = None):
+
+        if self.filter_type.name == FilterType(1).name and self.quantiles is None:
+            print(f"Note: fitting sirus with filter type {self.filter_type.name} without quantiles.")
+       
         assert X_train.shape[0] == len(
             y_train
         ), "X and y train must have same number of samples"
