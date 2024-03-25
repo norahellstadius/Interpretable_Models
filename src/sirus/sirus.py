@@ -35,6 +35,26 @@ class Sirus:
         remove_ld: bool = True,
         filter_type: FilterType = FilterType(1),
     ) -> None:
+        """
+        Initialize the Sirus model.
+
+        Args:
+            threshold (float): The frequency threshold for accepting a rule.
+            max_depth (int): The maximum depth of each decision tree.
+            min_samples_leaf (int): The minimum number of samples required to be at a leaf node.
+            max_leaf_nodes (int): Grow trees with max_leaf_nodes in best-first fashion.
+                                If None, then unlimited number of leaf nodes.
+            num_trees (int): The number of trees in the random forest model.
+            partial_sampling (float): The fraction of training samples to be used for training each tree.
+            quantiles (List[float]): The list of quantiles for quantile-based split points.
+            max_split_candidates (int): The maximum number of split candidates to consider at each node.
+            random_state (int): The seed value for random number generation.
+            remove_ld (bool): Whether to remove linearly dependent rules.
+            filter_type (FilterType): The type of filtering to be applied.
+                                    - FilterType(1): Two rules are considered the same if they have the same split value and split on the same feature. 
+                                                    Quantiles should be provided if FilterType(1) is selected.
+                                    - FilterType(2): Two rules are considered the same if their split values belong to the same quantile and split on the same feature.
+        """
         self.threshold = threshold
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
