@@ -62,18 +62,22 @@ class L0_Rulefit:
         self.regularization = regularization
         self.random_state = random_state
 
-        if data_type.name not in [DataType.REGRESSION.name, DataType.CLASSIFICATION.name]:
+        if self.data_type.name not in [DataType.REGRESSION.name, DataType.CLASSIFICATION.name]:
             raise ValueError(
                 "Invalid value for data_type. Expected 'Classification' or 'Regression', but got '{}'.".format(
                     data_type
                 )
             )
-        if regularization.name not in [RegType(1).name, RegType(2).name, RegType(3).name]:
+        if self.regularization.name not in [RegType(1).name, RegType(2).name, RegType(3).name]:
             raise ValueError(
                 "Invalid value for regularization. Expected 'RegType.NONE', 'RegType.L0' or 'RegType.RIDGE', but got '{}'.".format(
                     regularization
                 )
             )
+
+        if self.max_rules < 1: 
+            raise ValueError(f"max_rules parameter must be an int >= 1, but got {self.max_rules}")
+
 
         self.ml_model = None  # random forest model
         self.pre_regularized_rules = []
