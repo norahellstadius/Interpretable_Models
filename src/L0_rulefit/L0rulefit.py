@@ -62,7 +62,7 @@ class L0_Rulefit:
         self.regularization = regularization
         self.random_state = random_state
 
-        if data_type not in [DataType.REGRESSION, DataType.CLASSIFICATION]:
+        if data_type.name not in [DataType.REGRESSION.name, DataType.CLASSIFICATION.name]:
             raise ValueError(
                 "Invalid value for data_type. Expected 'Classification' or 'Regression', but got '{}'.".format(
                     data_type
@@ -110,7 +110,7 @@ class L0_Rulefit:
         if self.max_split_candidates is None:
             self.max_split_candidates = self.get_max_features() 
 
-        if self.data_type == DataType.REGRESSION:
+        if self.data_type.name == DataType.REGRESSION.name:
             self.ml_model = RandomForestRegressor(
                 n_estimators=self.num_trees,
                 max_depth=self.max_depth,
@@ -119,7 +119,7 @@ class L0_Rulefit:
                 max_samples=self.partial_sampling,
                 random_state=self.random_state,
             )
-        elif self.data_type == DataType.CLASSIFICATION:
+        elif self.data_type.name == DataType.CLASSIFICATION.name:
             self.ml_model = RandomForestClassifier(
                 n_estimators=self.num_trees,
                 max_depth=self.max_depth,
@@ -132,7 +132,7 @@ class L0_Rulefit:
         # fit the random forest
         self.ml_model.fit(self.X_train, self.y_train)
 
-        if self.data_type == DataType.REGRESSION:
+        if self.data_type.name == DataType.REGRESSION.name:
             self.rule_ensemble = RuleEnsembleRegression(
                  self.ml_model.estimators_, self.X_train, self.y_train
             )
@@ -236,10 +236,10 @@ if __name__ == "__main__":
 
     def get_scores(data_type, y_true, y_pred):
         score2 = 1 - explained_variance_score(y_true, y_pred)
-        if data_type == DataType.CLASSIFICATION:
+        if data_type.name == DataType.CLASSIFICATION.name:
             score1 = accuracy_score(y_true, y_pred)
             print(f"Accuracy: {score1}")
-        elif data_type == DataType.REGRESSION:
+        elif data_type.name == DataType.REGRESSION.name:
             score1 = mean_absolute_error(y_true, y_pred)
             print(f"Mean Absolute Error: {score1}")
 

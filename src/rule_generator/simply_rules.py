@@ -58,7 +58,7 @@ class SimplyRules:
         self.random_state = random_state
         self.quantiles = quantiles
 
-        if data_type not in [DataType.REGRESSION, DataType.CLASSIFICATION]:
+        if data_type.name not in [DataType.REGRESSION.name, DataType.CLASSIFICATION.name]:
             raise ValueError(
                 "Invalid value for data_type. Expected 'Classification' or 'Regression', but got '{}'.".format(
                     data_type
@@ -96,7 +96,7 @@ class SimplyRules:
             self.max_split_candidates = self.get_max_features() 
 
         if self.quantiles is None: 
-            if self.data_type == DataType.REGRESSION:
+            if self.data_type.name == DataType.REGRESSION.name:
                 self.ml_model = RandomForestRegressor(
                     n_estimators=self.num_trees,
                     max_depth=self.max_depth,
@@ -105,7 +105,7 @@ class SimplyRules:
                     max_samples=self.partial_sampling,
                     random_state=self.random_state,
                 )
-            elif self.data_type == DataType.CLASSIFICATION:
+            elif self.data_type.name == DataType.CLASSIFICATION.name:
                 self.ml_model = RandomForestClassifier(
                     n_estimators=self.num_trees,
                     max_depth=self.max_depth,
@@ -129,7 +129,7 @@ class SimplyRules:
         # fit the random forest
         self.ml_model.fit(self.X_train, self.y_train)
 
-        if self.data_type == DataType.REGRESSION:
+        if self.data_type.name == DataType.REGRESSION.name:
             self.rule_ensemble = RuleEnsembleRegression(
                  self.ml_model.estimators_, self.X_train, self.y_train
             )
@@ -168,7 +168,7 @@ class SimplyRules:
         )
         y_pred = (
             (y_pred >= 0.5).astype(int)
-            if self.data_type == DataType.CLASSIFICATION
+            if self.data_type.name == DataType.CLASSIFICATION.name
             else y_pred
         )
         return y_pred.flatten()

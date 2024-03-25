@@ -17,26 +17,29 @@ class RegType(Enum):
     L0 = 3
 
 def fit_lm(X: np.ndarray, y: np.ndarray, data_type: DataType): 
-    if data_type == DataType.REGRESSION:
+    if data_type.name == DataType.REGRESSION.name:
         model = LinearRegression(fit_intercept=True)
-    else: 
+    elif data_type.name == DataType.CLASSIFICATION.name:
         model = LogisticRegression(fit_intercept=True)
+    else: 
+        raise ValueError(f"data_type must be of DataType.REGRESSION or DataType.CLASSIFICATION, but given {data_type}")
     model.fit(X, y)
     return model
 
-
 def fit_ridge(X: np.ndarray, y: np.ndarray, data_type: DataType):
-    if data_type == DataType.REGRESSION:
+    if data_type.name == DataType.REGRESSION.name:
         alphas = np.logspace(np.log10(1e-4), np.log10(1e4), num=100, endpoint=True)
         model = RidgeCV(cv=5, alphas=alphas, fit_intercept=True)
         model.fit(X, y)
         model.coef_ = np.maximum(model.coef_, 0)
-    else:
+    elif data_type.name == DataType.CLASSIFICATION.name:
         model = LogisticRegressionCV(
             cv=5, Cs=100, fit_intercept=True, penalty="l2", max_iter=10000
         )
         model.fit(X, y)
         model.coef_[0] = np.maximum(model.coef_[0], 0)
+    else: 
+        raise ValueError(f"data_type must be of DataType.REGRESSION or DataType.CLASSIFICATION, but given {data_type}")
 
     return model
     
@@ -55,9 +58,12 @@ def fit_L0(
 ):
 
     assert X_train.shape[0] == len(y_train), "X_train and y_train must have same number of samples"
-    loss_type = (
-        "SquaredError" if data_type == DataType.REGRESSION else "Logistic"
-    )
+    if data_type.name == DataType.REGRESSION.name:
+        loss_type = "SquaredError"
+    elif data_type.name == DataType.CLASSIFICATION.name:
+        loss_type = "Logistic"
+    else: 
+        raise ValueError(f"data_type must be of DataType.REGRESSION or DataType.CLASSIFICATION, but given {data_type}")
 
     cv_fit_result = l0learn.cvfit(
         X_train,

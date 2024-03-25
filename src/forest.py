@@ -20,14 +20,14 @@ class RandomForest:
         quantiles: list = None,
         random_state: int = 1,
     ) -> None:
-        if data_type not in [DataType.CLASSIFICATION, DataType.REGRESSION]:
+        if data_type.name not in [DataType.CLASSIFICATION.name, DataType.REGRESSION.name]:
             raise ValueError(
                 "Invalid value for self.type. Expected 'Classification' or 'Regression', but got '{}'.".format(
                     data_type
                 )
             )
 
-        self.type = data_type
+        self.data_type = data_type
         self.max_depth = max_depth
         self.seed = random_state
         self.min_samples_leaf = min_samples_leaf
@@ -77,7 +77,7 @@ class RandomForest:
             X_samp = X[row_idxs, :]
             y_samp = y[row_idxs]  # Y NEEDS TO BE ARRAY FOR THIS TO WORK
 
-            if self.type == DataType.CLASSIFICATION:
+            if self.data_type.name == DataType.CLASSIFICATION.name:
                 tree_model = DecisionTreeClassification(
                     max_depth=max_depth,
                     min_samples_leaf=min_data_in_leaf,
@@ -86,7 +86,7 @@ class RandomForest:
                     quantiles=quantiles,
                     random_state=self.seed + i,
                 )
-            elif self.type == DataType.REGRESSION:
+            elif self.data_type.name == DataType.REGRESSION.name:
                 tree_model = DecisionTreeRegression(
                     max_depth=max_depth,
                     min_samples_leaf=min_data_in_leaf,
@@ -98,7 +98,7 @@ class RandomForest:
             else:
                 raise ValueError(
                     "Invalid value for self.type. Expected 'Classification' or 'Regression', but got '{}'.".format(
-                        self.type
+                        self.data_type
                     )
                 )
 
@@ -141,7 +141,7 @@ class RandomForest:
         # get preds for all trees
         all_preds = np.array([tree.predict(X_test) for tree in self.estimators_])
         # aggregate pred over the trees
-        if self.type == DataType.CLASSIFICATION:
+        if self.data_type.name == DataType.CLASSIFICATION.name:
             return mode(all_preds, axis=0, keepdims=True).mode.squeeze()
         else:
             return np.mean(all_preds, axis=0)
