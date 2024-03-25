@@ -109,7 +109,8 @@ def fit_L0(
     coeffs = cv_fit_result.coeff(
         lambda_0=optimal_lambda, gamma=optimal_gamma, include_intercept=False
     ).toarray()
-
+    
+    
     return {
         "model": linear_model,
         "optimal_gamma": optimal_gamma,

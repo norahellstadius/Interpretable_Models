@@ -149,7 +149,7 @@ class L0_Rulefit:
         #apply L0 regularisation if regularize is True
         self.fit_linear_model(X_rules_scaled, self.y_train, self.regularization)
         # if regularize is True: get rules which have non zero coefficents
-        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs) if self.regularization == RegType.L0 else copy.deepcopy(self.pre_regularized_rules)
+        self.estimators_ = self.get_active_rules(self.pre_regularized_rules, self.coeffs) if self.regularization.name == RegType.L0.name else copy.deepcopy(self.pre_regularized_rules)
         return self
     
     def get_feature_matrix(self, rules: list[Rule], X: np.ndarray) -> np.ndarray:
