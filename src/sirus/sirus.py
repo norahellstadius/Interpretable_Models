@@ -49,8 +49,11 @@ class Sirus:
 
         if self.filter_type.name == FilterType(2).name and self.quantiles is None:
             raise ValueError(
-                "Quantiles cannot be None when filter_type is INSIDE_SAME_QUANTILE"
+                "Quantiles cannot be None when filter_type is INSIDE_SAME_QUANTILE."
             )
+
+        if self.filter_type.name == FilterType(1).name and self.quantiles is None:
+            print(f"Note: fitting sirus with filter type {self.filter_type.name} without quantiles.")
 
         self.rf_model = None  # Random forest instance
         self.rules = None
@@ -131,7 +134,7 @@ class Sirus:
                 for rule, count in rules_count_dict.items()
                 if count >= num_rules_threshold
             ]
-        else: 
+        elif filter_type.name == FilterType(2).name: 
             rules_in_same_quantile = get_quantile_rules(rules, self.quantiles)
             # using set to ensure we only get unqiue rules
             filtered_rules = [
@@ -140,7 +143,8 @@ class Sirus:
                 if len(rules) >= num_rules_threshold
             ]
             filtered_rules = [item for sublist in filtered_rules for item in sublist]
-        
+        else: 
+            raise ValueError(f"expecting filter_type to be FilterType(1) or FilterType(2), but got {filter_type}")
         return filtered_rules
 
     def filter_rules(self, all_rules: list[Rule]) -> list[Rule]:
