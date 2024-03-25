@@ -209,7 +209,7 @@ class L0_Rulefit:
         ) if self.regularization == RegType.L0 else self.linear_model.predict(X_rules_scaled)
         y_pred = (
             (y_pred >= 0.5).astype(int)
-            if self.data_type == DataType.CLASSIFICATION
+            if self.data_type.name == DataType.CLASSIFICATION.name
             else y_pred
         )
         return y_pred.flatten()
