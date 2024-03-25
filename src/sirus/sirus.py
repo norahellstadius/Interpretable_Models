@@ -193,33 +193,8 @@ class Sirus:
 
 
 class SirusClassification(Sirus):
-    def __init__(
-        self,
-        threshold: int = 0.072,
-        max_depth: int = 2,
-        min_samples_leaf: int = 5,
-        max_leaf_nodes: int = -1,
-        num_trees: int = 100,
-        partial_sampling: int = 0.7,
-        quantiles: list = None,
-        max_split_candidates: int = None,
-        random_state: int = 10,
-        remove_ld: bool = True,
-        filter_type: FilterType = FilterType(1),
-    ) -> None:
-        super().__init__(
-            threshold,
-            max_depth,
-            min_samples_leaf,
-            max_leaf_nodes,
-            num_trees,
-            partial_sampling,
-            quantiles,
-            max_split_candidates,
-            random_state,
-            remove_ld,
-            filter_type,
-        )
+    def __init__(self, threshold: int = 0.072, max_depth: int = 2, min_samples_leaf: int = 5, max_leaf_nodes: int = -1, num_trees: int = 100, partial_sampling: int = 0.7, quantiles: list = None, max_split_candidates: int = None, random_state: int = 10, remove_ld: bool = True, filter_type: FilterType = FilterType(1)) -> None:
+        super().__init__(threshold, max_depth, min_samples_leaf, max_leaf_nodes, num_trees, partial_sampling, quantiles, max_split_candidates, random_state, remove_ld, filter_type)
 
         self.data_type = DataType.CLASSIFICATION
 
@@ -266,33 +241,8 @@ class SirusClassification(Sirus):
 
 
 class SirusRegression(Sirus):
-    def __init__(
-        self,
-        threshold: int = 0.072,
-        max_depth: int = 2,
-        min_samples_leaf: int = 5,
-        max_leaf_nodes: int = -1,
-        num_trees: int = 100,
-        partial_sampling: int = 0.7,
-        quantiles: list = None,
-        max_split_candidates: int = None,
-        random_state: int = 10,
-        remove_ld: bool = True,
-        filter_type: FilterType = FilterType(1),
-    ) -> None:
-        super().__init__(
-            threshold,
-            max_depth,
-            min_samples_leaf,
-            max_leaf_nodes,
-            num_trees,
-            partial_sampling,
-            quantiles,
-            max_split_candidates,
-            random_state,
-            remove_ld,
-            filter_type,
-        )
+    def __init__(self, threshold: int = 0.072, max_depth: int = 2, min_samples_leaf: int = 5, max_leaf_nodes: int = -1, num_trees: int = 100, partial_sampling: int = 0.7, quantiles: list = None, max_split_candidates: int = None, random_state: int = 10, remove_ld: bool = True, filter_type: FilterType = FilterType(1)) -> None:
+        super().__init__(threshold, max_depth, min_samples_leaf, max_leaf_nodes, num_trees, partial_sampling, quantiles, max_split_candidates, random_state, remove_ld, filter_type)
 
         self.data_type = DataType.REGRESSION
 
