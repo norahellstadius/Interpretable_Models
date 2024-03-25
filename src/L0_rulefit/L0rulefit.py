@@ -206,7 +206,7 @@ class L0_Rulefit:
         X_rules_scaled = self.scale_data(X_rules, train=False)
         y_pred = self.linear_model.predict(
             X_rules_scaled, lambda_0=self.optimal_lambda, gamma=self.optimal_gamma
-        ) if self.regularization == RegType.L0 else self.linear_model.predict(X_rules_scaled)
+        ) if self.regularization.name == RegType.L0.name else self.linear_model.predict(X_rules_scaled)
         y_pred = (
             (y_pred >= 0.5).astype(int)
             if self.data_type.name == DataType.CLASSIFICATION.name
