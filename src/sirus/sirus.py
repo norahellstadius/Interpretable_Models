@@ -47,7 +47,7 @@ class Sirus:
         self.remove_ld = remove_ld  # bool to remove linearly dependent rules
         self.filter_type = filter_type
 
-        if self.filter_type == FilterType(2) and self.quantiles is None:
+        if self.filter_type.name == FilterType(2).name and self.quantiles is None:
             raise ValueError(
                 "Quantiles cannot be None when filter_type is INSIDE_SAME_QUANTILE"
             )
@@ -209,7 +209,7 @@ class SirusClassification(Sirus):
         quantiles: list = None,
         max_split_candidates: list = None,
     ):
-        if quantiles is None or self.filter_type is FilterType(2):
+        if quantiles is None or self.filter_type.name == FilterType(2).name:
             self.rf_model = RandomForestClassifier(
                 max_depth=max_depth,
                 min_samples_leaf=min_samples_leaf,
@@ -284,7 +284,7 @@ class SirusRegression(Sirus):
     ):
         # Option 1) Dont provide quantiles
         # Option 2) Provide quantiles but perform RF without quantiles and only use when filtering the rules (if rules are in the same quantile they are classified as the same)
-        if quantiles is None or self.filter_type is FilterType(2):
+        if quantiles is None or self.filter_type.name == FilterType(2).name:
             self.rf_model = RandomForestRegressor(
                 max_depth=max_depth,
                 min_samples_leaf=min_samples_leaf,
