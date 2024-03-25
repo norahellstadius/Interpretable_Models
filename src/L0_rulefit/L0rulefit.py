@@ -175,7 +175,7 @@ class L0_Rulefit:
         gamma_max: float = 0.1,
         algorithm: str = "CDPSI",
     ):  
-        if regularize == RegType.L0:
+        if regularize.name == RegType.L0.name:
             result_dict = fit_L0(
                 X_train = X_train,
                 y_train = y_train,
