@@ -124,7 +124,7 @@ class Sirus:
 
     def get_high_frequency_rules(self, rules: list[Rule], num_rules_threshold: float, filter_type: FilterType) -> list[Rule]:
         '''Return a list of rule which has a frequency which is higher or equal to num_rules_threshold'''
-        if filter_type == FilterType(1):
+        if filter_type.name == FilterType(1).name:
             rules_count_dict = get_rules_count(rules)
             filtered_rules = [
                 rule
