@@ -31,9 +31,9 @@ class Sirus:
         partial_sampling: int = 0.70,
         quantiles: list = None,
         max_split_candidates: int = None,
-        filter_type: FilterType = FilterType(1),
         random_state: int = 10,
         remove_ld: bool = True,
+        filter_type: FilterType = FilterType(1),
     ) -> None:
         self.threshold = threshold
         self.max_depth = max_depth
@@ -54,9 +54,9 @@ class Sirus:
 
         if self.filter_type.name == FilterType(1).name and self.quantiles is None:
             print(f"Note: fitting sirus with filter type {self.filter_type.name} without quantiles.")
-        
+
         if self.threshold > 1 or self.threshold < 0:
-            raise ValueError(f"threshold parameter must be in [0,1], but got {self.threshold}")
+            raise ValueError(f"threshold parameter must be in [0,1], but got {threshold}")
 
         self.rf_model = None  # Random forest instance
         self.rules = None

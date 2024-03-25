@@ -122,6 +122,10 @@ class L0_Rulefit:
                 max_features=self.max_split_candidates,
                 max_samples=self.partial_sampling,
                 random_state=self.random_state,
+            ).fit(self.X_train, self.y_train)
+
+            self.rule_ensemble = RuleEnsembleRegression(
+                 self.ml_model.estimators_, self.X_train, self.y_train
             )
         elif self.data_type.name == DataType.CLASSIFICATION.name:
             self.ml_model = RandomForestClassifier(
@@ -131,19 +135,13 @@ class L0_Rulefit:
                 max_features=self.max_split_candidates,
                 max_samples=self.partial_sampling,  # TODO: CHECK IF THIS IS CORRECT
                 random_state=self.random_state,
-            )
+            ).fit(self.X_train, self.y_train)
 
-        # fit the random forest
-        self.ml_model.fit(self.X_train, self.y_train)
-
-        if self.data_type.name == DataType.REGRESSION.name:
-            self.rule_ensemble = RuleEnsembleRegression(
-                 self.ml_model.estimators_, self.X_train, self.y_train
-            )
-        else:
             self.rule_ensemble = RuleEnsembleClassification(
                  self.ml_model.estimators_, self.X_train, self.y_train
             )
+        else:
+            ValueError(f"Expecting data_type of type CLASSIFICATION or Regression. But got {self.data_type.name}")
 
         # single rules are turned left and duplicates are removed
         self.pre_regularized_rules = self.rule_ensemble.filter_rules()
