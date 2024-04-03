@@ -1,11 +1,15 @@
 # Interpretable Models
-This repository contains code for several interpretable models:
+Author: Nora Hallqvist
+
+## Description
+Welcome to the repository housing code for several interpretable models:
 
 1. **SIRUS**
 2. **L0 Rulefit**
 3. **Simply Rules**
 
-## Model Descriptions 
+To better understand these models and their workings, I recommend delving into [this resource](https://christophm.github.io/interpretable-ml-book/rulefit.html) for comprehensive insights into rule-based models.
+
 ### 1. SIRUS
 
 - **Important Parameters**: 
@@ -39,7 +43,9 @@ This repository contains code for several interpretable models:
 
     Note: In L0 Rulefit, you can control the number of rules used in the linear model by the `max rules` parameter, which is a hyperparameter in L0 regularization.
 
-- **Sources**: [https://arxiv.org/abs/2202.04820](https://arxiv.org/abs/2202.04820)
+- **Sources**: 
+    - [https://arxiv.org/abs/2202.04820](https://arxiv.org/abs/2202.04820)
+    - [https://arxiv.org/pdf/0811.1679.pdf](https://arxiv.org/pdf/0811.1679.pdf)
 
 ### 3. Simply Rules
 
@@ -48,7 +54,7 @@ This repository contains code for several interpretable models:
     2. Extract all rules.
     3. Fit a linear model over the rules without regularization.
 
-    Note: This model was implemented with the purpose of generating rules without a specific aim towards predictive power.
+    Note: This model was implemented with the purpose of generating rules without a specific aim towards predictive power. 
 
 ## Project structure 
 
