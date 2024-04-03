@@ -8,7 +8,7 @@ Welcome to the repository housing code for several interpretable models:
 2. **L0 Rulefit**
 3. **Simply Rules**
 
-To better understand these models and their workings, I recommend delving into [this resource](https://christophm.github.io/interpretable-ml-book/rulefit.html) for comprehensive insights into rule-based models.
+To better understand these models and their workings, I recommend delving into [this resource](https://christophm.github.io/interpretable-ml-book/rulefit.html) for more insights into rule-based models.
 
 ### 1. SIRUS
 
@@ -28,12 +28,13 @@ To better understand these models and their workings, I recommend delving into [
 
     Note: In SIRUS, you cannot directly control the number of rules used in the linear model; it is instead controlled by the `threshold` parameter.
 
-- **Sources**: [https://proceedings.mlr.press/v130/benard21a.html](https://proceedings.mlr.press/v130/benard21a.html)
+- **Sources**: 
+    - [https://proceedings.mlr.press/v130/benard21a.html](https://proceedings.mlr.press/v130/benard21a.html)
 
 ### 2. L0 Rulefit
 
 - **Important Parameters**:
-    - `Max rules` (int): Determines the maximum rules used in the linear model. The maximum rules are controlled by L0 regularization.
+    - `Max Rules` (int): Determines the maximum rules used in the linear model. The maximum rules are controlled by L0 regularization.
 
 - **Description**:
     1. Quantize the dataset (optional).
@@ -94,7 +95,7 @@ To better understand these models and their workings, I recommend delving into [
 * `src/linear.py` : Contains an enum called RegType used to define the regularization type. Also contains functions to fit linear model with different regularizations.
 * `src/quantiles.py` : Contains code to quantize the dataset.
 * `src/RuleEsemble.py` : Contains code to extract rules from a random forest. The random forest can be an instance of Sklearn's or the class defined in `src/forest.py`.
-* `src/rules.py` : Contains code to define a rule and helper functions to deal with rules.
+* `src/rules.py` : Contains an enum called FilterType used define which filter type is used in SIRUS. Also contains code to define a rule and helper functions to deal with rules.
 * `src/tree.py` : Contains a class to build a tree where each split value can be based on a quantile.
 
 
@@ -106,6 +107,8 @@ To better understand these models and their workings, I recommend delving into [
    - `filterType(1)` indicates that the dataset is quantized, and two rules are classified as the same if they are both split on the same feature and have the same split value.
 
 ```python 
+from src.rules import FilterType
+
 NUM_TREES = 100
 MAX_DEPTH = 2
 P0 = 0.080
@@ -140,6 +143,8 @@ y_pred = model.predict(X_test)
    - In L0 Rulefit, there are no different classes for Regression and Classification. Instead, you must use the enum `DataType` to define the data type.
 
 ```python
+from src.data import DataType
+
 MAX_DEPTH = 2
 NUM_QUANTILES = 10
 MIN_LEAF_DATA = 5
