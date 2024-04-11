@@ -66,7 +66,7 @@ class SimplyRules:
             )
 
         self.ml_model = None  # random forest model
-        self.estimators_ = []  # rules after regularisation
+        self.estimators_ = []  # rules before regularisation
         self.linear_model = None  # L0 model
 
     def set_attributes(self, **kwargs):
